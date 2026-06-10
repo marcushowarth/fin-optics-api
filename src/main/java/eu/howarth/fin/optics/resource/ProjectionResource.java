@@ -1,4 +1,4 @@
-package eu.howarth.fin.optics.controller;
+package eu.howarth.fin.optics.resource;
 
 import eu.howarth.fin.optics.dto.ProjectionRequest;
 import eu.howarth.fin.optics.dto.ProjectionResponse;
@@ -15,22 +15,27 @@ import eu.howarth.fin.rpi.projection.ConstantInflationProjection;
 import eu.howarth.fin.rpi.projection.RpiProjector;
 import eu.howarth.fin.rpi.scenario.RpiScenario;
 import eu.howarth.fin.rpi.scenario.RpiScenarioSet;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.smallrye.common.annotation.Blocking;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import java.time.YearMonth;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class ProjectionController {
+@Path("/api")
+public class ProjectionResource {
 
     private static final RpiDataset HISTORICAL = RpiDatasetLoader.bundled();
 
-    @PostMapping("/projection")
-    public ProjectionResponse project(@RequestBody ProjectionRequest request) {
+    @POST
+    @Path("/projection")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Blocking
+    public ProjectionResponse project(ProjectionRequest request) {
         YearMonth from = YearMonth.parse(request.from());
         YearMonth to   = YearMonth.parse(request.to());
         YearMonth base = YearMonth.parse(request.base());
