@@ -7,10 +7,17 @@ import io.quarkus.test.junit.QuarkusIntegrationTest;
  * the built native binary rather than the JVM.
  *
  * <p>Inert in normal builds (skipITs=true); runs under {@code mvn verify -Dnative}.
- * Until {@code @RegisterForReflection} is added to the six {@code FinancialItemDto}
- * subtypes this is expected to FAIL on native — Jackson can't resolve the
- * polymorphic subtypes once GraalVM strips the reflection metadata. Watching it
- * go red, then green after the annotations, is Phase 2.
+ *
+ * <p>Finding (2026-06-10): no {@code @RegisterForReflection} is needed. Quarkus's
+ * build-time Jackson/REST processing already registers the polymorphic
+ * {@code FinancialItemDto} subtypes for reflection, so the native binary
+ * deserializes all six item types correctly — verified by running the native
+ * binary in a container (HTTP 200, full projection). This is where Quarkus beats
+ * plain Spring Boot + GraalVM, which would have needed the annotations.
+ *
+ * <p>Caveat: a container-build on macOS produces a <em>Linux</em> binary the host
+ * can't exec, so this IT only runs green on Linux (CI / the deploy target).
+ * Locally on macOS, verify native via a container run instead.
  */
 @QuarkusIntegrationTest
 class ProjectionResourceIT extends ProjectionResourceTest {
