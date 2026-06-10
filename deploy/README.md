@@ -10,13 +10,23 @@ FIN OPTICS uses a **dual** deploy on the existing EC2, fronted by Caddy:
 
 ## One-time prerequisites
 
-1. **ECR repo** — `aws ecr create-repository --repository-name fin-optics --region eu-west-2`
-2. **Repo secret** `PACKAGES_TOKEN` — a GitHub token with `read:packages` (the native build pulls `fin-model` from GitHub Packages). Same token already in `fin-model`/this repo for the old build.
-   - Existing secrets reused: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `EC2_HOST`, `EC2_SSH_KEY`; var `AWS_ACCOUNT_ID`.
+1. **ECR repo** — `aws ecr create-repository --repository-name fin-optics --region eu-west-2` ✅
+2. **GitHub Actions secrets/variables — required on this repo** (repo-level; no Environment gating). All added 2026-06-10. **Values are not in this repo** — they live in private ops notes.
+
+   | Name | Kind |
+   |---|---|
+   | `AWS_ACCESS_KEY_ID` | secret |
+   | `AWS_SECRET_ACCESS_KEY` | secret |
+   | `EC2_HOST` | secret |
+   | `EC2_SSH_KEY` | secret |
+   | `PACKAGES_TOKEN` | secret (`read:packages` — native build pulls `fin-model` from GitHub Packages) |
+   | `AWS_ACCOUNT_ID` | **variable** (read as `${{ vars.AWS_ACCOUNT_ID }}`) |
+
+   (`fin-optics-ui` needs only `EC2_HOST` + `EC2_SSH_KEY` for its rsync deploy.)
 3. **On the EC2:**
    - `sudo mkdir -p /srv/optics-ui && sudo chown ec2-user /srv/optics-ui`
    - Add `deploy/Caddyfile-optics.snippet` to the Caddyfile, reload Caddy.
-4. **DNS** — `optics.howarth.eu A 35.177.222.179` (done 2026-06-10).
+4. **DNS** — `optics.howarth.eu` A record → the EC2 (done 2026-06-10).
 
 ## Ports on the EC2
 `8080` kanban-mcp · `8081` mediawiki-mcp · **`8082` fin-optics-api** (this).
