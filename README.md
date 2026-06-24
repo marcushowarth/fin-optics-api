@@ -31,7 +31,7 @@ No database, no session — items in, projection out. Paired with the
     { "type": "income", "name": "Salary", "start": "2026-01",
       "monthlyAmount": 4000, "annualGrowthRate": 0.03 },
     { "type": "expenditure", "name": "Rent", "start": "2026-01",
-      "monthlyAmount": 1500 },
+      "monthlyAmount": 1500, "annualGrowthRate": 0.02 },
     { "type": "event", "name": "Inheritance", "date": "2030-06", "amount": 50000 }
   ],
   "scenarios": [

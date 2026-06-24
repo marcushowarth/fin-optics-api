@@ -7,5 +7,6 @@ public record ExpenditureDto(
         String description,
         String start,
         String end,
-        BigDecimal monthlyAmount
+        BigDecimal monthlyAmount,
+        BigDecimal annualGrowthRate
 ) implements FinancialItemDto {}

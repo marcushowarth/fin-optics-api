@@ -3,6 +3,7 @@ package eu.howarth.fin.optics.mapper;
 import eu.howarth.fin.optics.dto.item.*;
 import eu.howarth.fin.planning.*;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Optional;
 
@@ -36,7 +37,8 @@ public class FinancialItemMapper {
                     e.name(), e.description(),
                     YearMonth.parse(e.start()),
                     Optional.ofNullable(e.end()).map(YearMonth::parse),
-                    e.monthlyAmount());
+                    e.monthlyAmount(),
+                    Optional.ofNullable(e.annualGrowthRate()).orElse(BigDecimal.ZERO));
 
             case LiabilityDto l -> new Liability(
                     l.name(), l.description(),
