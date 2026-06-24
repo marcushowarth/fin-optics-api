@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = BankAccountDto.class, name = "bank-account"),
         @JsonSubTypes.Type(value = IncomeDto.class,      name = "income"),
         @JsonSubTypes.Type(value = ExpenditureDto.class, name = "expenditure"),
-        @JsonSubTypes.Type(value = LiabilityDto.class,   name = "liability")
+        @JsonSubTypes.Type(value = LiabilityDto.class,   name = "liability"),
+        @JsonSubTypes.Type(value = FinancialEventDto.class, name = "event")
 })
 public sealed interface FinancialItemDto
-        permits AssetDto, InvestmentDto, BankAccountDto, IncomeDto, ExpenditureDto, LiabilityDto {}
+        permits AssetDto, InvestmentDto, BankAccountDto, IncomeDto, ExpenditureDto, LiabilityDto, FinancialEventDto {}

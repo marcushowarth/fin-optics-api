@@ -42,6 +42,10 @@ public class FinancialItemMapper {
                     l.name(), l.description(),
                     YearMonth.parse(l.start()),
                     l.balance(), l.annualInterestRate(), l.monthlyRepayment());
+
+            case FinancialEventDto e -> new FinancialEvent(
+                    e.name(), e.description(),
+                    YearMonth.parse(e.date()), e.amount());
         };
     }
 }

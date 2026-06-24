@@ -31,7 +31,8 @@ No database, no session — items in, projection out. Paired with the
     { "type": "income", "name": "Salary", "start": "2026-01",
       "monthlyAmount": 4000, "annualGrowthRate": 0.03 },
     { "type": "expenditure", "name": "Rent", "start": "2026-01",
-      "end": "2055-12", "monthlyAmount": 1500 }
+      "monthlyAmount": 1500 },
+    { "type": "event", "name": "Inheritance", "date": "2030-06", "amount": 50000 }
   ],
   "scenarios": [
     { "name": "low",  "annualRate": 0.02 },
@@ -42,7 +43,9 @@ No database, no session — items in, projection out. Paired with the
 ```
 
 `type` is one of `asset`, `investment`, `bank-account`, `income`, `expenditure`,
-`liability`; each carries its own fields. All months are `"YYYY-MM"` strings.
+`liability`, `event`; each carries its own fields. `income`/`expenditure` with no
+`end` run to the horizon; `event` is a one-off dated cash movement with a signed
+`amount` (positive in, negative out). All months are `"YYYY-MM"` strings.
 
 **Response**
 
