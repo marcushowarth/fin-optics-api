@@ -11,15 +11,16 @@ import static org.hamcrest.Matchers.notNullValue;
 @QuarkusTest
 class ProjectionResourceTest {
 
-    // Exercises polymorphic deserialization of all six FinancialItemDto subtypes
-    // and the full projection path (nominal + real-terms scenarios).
-    private static final String ALL_SIX_ITEMS = """
+    // Exercises polymorphic deserialization of all five FinancialItemDto subtypes,
+    // startingCash seeding, and the full projection path (nominal + real-terms).
+    // bank-account was removed as an item type in favour of top-level startingCash.
+    private static final String FIVE_ITEMS_WITH_STARTING_CASH = """
             {
               "from": "2026-01",
               "to": "2027-12",
               "base": "2026-01",
+              "startingCash": 5000,
               "items": [
-                {"type":"bank-account","name":"Monzo","description":"","startBalance":5000},
                 {"type":"asset","name":"House","description":"","start":"2026-01","startValue":300000,"annualGrowthRate":0.03},
                 {"type":"investment","name":"ISA","description":"","start":"2026-01","startValue":20000,"annualGrowthRate":0.05},
                 {"type":"income","name":"Salary","description":"","start":"2026-01","monthlyAmount":4000,"annualGrowthRate":0.03},
@@ -35,10 +36,10 @@ class ProjectionResourceTest {
             """;
 
     @Test
-    void projectsAllSixItemTypesWithScenarios() {
+    void projectsFiveItemTypesWithStartingCash() {
         given()
                 .contentType("application/json")
-                .body(ALL_SIX_ITEMS)
+                .body(FIVE_ITEMS_WITH_STARTING_CASH)
         .when()
                 .post("/api/projection")
         .then()

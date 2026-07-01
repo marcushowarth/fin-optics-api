@@ -4,6 +4,7 @@ import eu.howarth.fin.optics.dto.ProjectionRequest;
 import eu.howarth.fin.optics.dto.ProjectionResponse;
 import eu.howarth.fin.optics.dto.ScenarioDefinition;
 import eu.howarth.fin.optics.mapper.FinancialItemMapper;
+import eu.howarth.fin.planning.BankAccount;
 import eu.howarth.fin.planning.FinancialItem;
 import eu.howarth.fin.planning.FinancialModel;
 import eu.howarth.fin.planning.ModelProjection;
@@ -22,7 +23,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/api")
@@ -40,9 +43,14 @@ public class ProjectionResource {
         YearMonth to   = YearMonth.parse(request.to());
         YearMonth base = YearMonth.parse(request.base());
 
-        List<FinancialItem> items = request.items().stream()
+        List<FinancialItem> items = new ArrayList<>(request.items().stream()
                 .map(FinancialItemMapper::toModel)
-                .toList();
+                .toList());
+
+        BigDecimal startingCash = request.startingCash();
+        if (startingCash != null && startingCash.compareTo(BigDecimal.ZERO) != 0) {
+            items.add(0, new BankAccount("Starting cash", "", startingCash));
+        }
 
         ModelProjection nominal = new FinancialModel(items).project(from, to);
 

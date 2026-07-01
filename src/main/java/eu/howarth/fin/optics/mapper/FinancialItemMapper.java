@@ -24,9 +24,6 @@ public class FinancialItemMapper {
                     Optional.ofNullable(i.drawdownStart()).map(YearMonth::parse),
                     Optional.ofNullable(i.monthlyDrawdown()));
 
-            case BankAccountDto b -> new BankAccount(
-                    b.name(), b.description(), b.startBalance());
-
             case IncomeDto i -> new Income(
                     i.name(), i.description(),
                     YearMonth.parse(i.start()),

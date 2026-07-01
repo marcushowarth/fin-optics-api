@@ -26,8 +26,8 @@ No database, no session — items in, projection out. Paired with the
   "from": "2026-01",
   "to":   "2055-12",
   "base": "2026-01",
+  "startingCash": 5000,
   "items": [
-    { "type": "bank-account", "name": "Monzo", "startBalance": 5000 },
     { "type": "income", "name": "Salary", "start": "2026-01",
       "monthlyAmount": 4000, "annualGrowthRate": 0.03 },
     { "type": "expenditure", "name": "Rent", "start": "2026-01",
@@ -42,10 +42,12 @@ No database, no session — items in, projection out. Paired with the
 }
 ```
 
-`type` is one of `asset`, `investment`, `bank-account`, `income`, `expenditure`,
-`liability`, `event`; each carries its own fields. `income`/`expenditure` with no
-`end` run to the horizon; `event` is a one-off dated cash movement with a signed
-`amount` (positive in, negative out). All months are `"YYYY-MM"` strings.
+`type` is one of `asset`, `investment`, `income`, `expenditure`, `liability`,
+`event`; each carries its own fields. `income`/`expenditure` with no `end` run
+to the horizon; `event` is a one-off dated cash movement with a signed `amount`
+(positive in, negative out). All months are `"YYYY-MM"` strings. `startingCash`
+(optional) seeds the cash position at `from`; it replaces the old
+`bank-account` item type.
 
 **Response**
 
@@ -54,7 +56,7 @@ No database, no session — items in, projection out. Paired with the
   "nominal": {
     "netWorth":      { "2026-01": 5000, "...": "..." },
     "cashPosition":  { "2026-01": 5000, "...": "..." },
-    "itemPositions": { "Monzo": { "2026-01": 5000 } },
+    "itemPositions": { "Starting cash": { "2026-01": 5000 } },
     "warnings":      [ { "month": "2031-04", "cashPosition": -1200 } ]
   },
   "realTerms": {
