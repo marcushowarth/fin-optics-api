@@ -1,7 +1,7 @@
 # fin-optics-api
 
-The REST layer for **FIN OPTICS** — a thin, stateless Spring Boot service that
-wraps the [`fin-model`](https://github.com/marcushowarth/fin-model) engine. It
+The REST layer for **FIN OPTICS** — a thin, stateless Quarkus-native service
+that wraps the [`fin-model`](https://github.com/marcushowarth/fin-model) engine. It
 takes a list of financial items and inflation scenarios, runs a projection, and
 returns nominal and real-terms series as JSON.
 
@@ -10,7 +10,7 @@ No database, no session — items in, projection out. Paired with the
 
 ## Stack
 
-- **Spring Boot 4.0.6** on **JDK 25**
+- **Quarkus 3.33.1 LTS** on **JDK 25**, compiled to a **native image** (GraalVM/Mandrel, ~20 MiB)
 - `fin-model-planning` (consumed from GitHub Packages) for the calculation
 - Jackson polymorphic deserialisation over a sealed `FinancialItemDto`, mapped to
   the engine's domain via an exhaustive pattern-matching `switch`
@@ -46,8 +46,7 @@ No database, no session — items in, projection out. Paired with the
 `event`; each carries its own fields. `income`/`expenditure` with no `end` run
 to the horizon; `event` is a one-off dated cash movement with a signed `amount`
 (positive in, negative out). All months are `"YYYY-MM"` strings. `startingCash`
-(optional) seeds the cash position at `from`; it replaces the old
-`bank-account` item type.
+(optional) seeds the cash position at `from`.
 
 **Response**
 
@@ -71,24 +70,41 @@ to the horizon; `event` is a one-off dated cash movement with a signed `amount`
 `warnings` lists every month the cash position is negative — the projection still
 runs to completion, it just flags the breaches.
 
+### `GET /api/version`
+
+Returns `{ "version", "gitSha", "builtAt" }` — the UI footer reads this.
+
+### `GET /q/health`
+
+Quarkus's built-in liveness/readiness check.
+
 ## Run
 
 Requires **JDK 25** and `fin-model` available (from GitHub Packages or
 `mvn install`d locally).
 
 ```bash
-mvn spring-boot:run        # starts on http://localhost:8090
+mvn quarkus:dev -Dquarkus.http.port=8090    # dev mode, live reload, http://localhost:8090
 ```
 
-Or build and run the jar:
+Native build:
 
 ```bash
-mvn package
-java -jar target/fin-optics-api-0.0.1-SNAPSHOT.jar
+mvn package -Dnative -Dquarkus.native.container-build=true \
+  -Dquarkus.native.builder-image=quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25
+./target/fin-optics-api-*-runner
 ```
 
 CORS is open in dev so the Vite front end (`localhost:5173`) can call the API
 directly; the front end also proxies `/api` to `:8090`.
+
+## Deploy
+
+GitHub Actions builds the native image, pushes it to ECR, and restarts the
+container on EC2 (`127.0.0.1:8082`). Caddy fronts it at
+[optics.howarth.eu](https://optics.howarth.eu), serving the UI as static files
+and reverse-proxying `/api` to this service — same origin, no CORS needed in
+production.
 
 ## License
 
