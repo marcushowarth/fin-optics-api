@@ -106,6 +106,13 @@ container on EC2 (`127.0.0.1:8082`). Caddy fronts it at
 and reverse-proxying `/api` to this service — same origin, no CORS needed in
 production.
 
+## Privacy
+
+No database, no session, no request-body logging — Quarkus's HTTP access log
+is opt-in and disabled here, and the Caddy site block in front of this service
+has no `log` directive. See [`fin-optics-ui`](https://github.com/marcushowarth/fin-optics-ui#privacy)
+for the full statement.
+
 ## License
 
 [MIT](LICENSE)
