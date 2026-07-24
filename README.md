@@ -100,8 +100,8 @@ directly; the front end also proxies `/api` to `:8090`.
 
 ## Deploy
 
-GitHub Actions builds the native image, pushes it to ECR, and restarts the
-container on EC2 (`127.0.0.1:8082`). Caddy fronts it at
+GitHub Actions builds the native image, pushes it to GHCR, and restarts the
+container on the host (`127.0.0.1:8082`). Caddy fronts it at
 [optics.howarth.eu](https://optics.howarth.eu), serving the UI as static files
 and reverse-proxying `/api` to this service — same origin, no CORS needed in
 production.
