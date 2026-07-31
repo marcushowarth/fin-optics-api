@@ -23,6 +23,7 @@ public record ProjectionResponse(NominalDto nominal, RealTermsDto realTerms) {
             Map<String, BigDecimal> netWorth,
             Map<String, BigDecimal> cashPosition,
             Map<String, Map<String, BigDecimal>> itemPositions,
+            Map<String, Map<String, BigDecimal>> itemFlows,
             List<SolvencyWarningDto> warnings) {
 
         static NominalDto from(ModelProjection p) {
@@ -30,6 +31,10 @@ public record ProjectionResponse(NominalDto nominal, RealTermsDto realTerms) {
                     toStringKeys(p.netWorth()),
                     toStringKeys(p.cashPosition()),
                     p.itemPositions().entrySet().stream()
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    e -> toStringKeys(e.getValue()))),
+                    p.itemFlows().entrySet().stream()
                             .collect(Collectors.toMap(
                                     Map.Entry::getKey,
                                     e -> toStringKeys(e.getValue()))),
