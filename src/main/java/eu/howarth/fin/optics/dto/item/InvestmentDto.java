@@ -8,6 +8,9 @@ public record InvestmentDto(
         String start,
         BigDecimal startValue,
         BigDecimal annualGrowthRate,
+        BigDecimal monthlyContribution,
+        BigDecimal contributionGrowthRate,
+        String contributionEnd,
         String drawdownStart,
         BigDecimal monthlyDrawdown
 ) implements FinancialItemDto {}

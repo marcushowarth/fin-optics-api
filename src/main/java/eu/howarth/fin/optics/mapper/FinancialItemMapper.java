@@ -21,6 +21,9 @@ public class FinancialItemMapper {
                     i.name(), i.description(),
                     YearMonth.parse(i.start()),
                     i.startValue(), i.annualGrowthRate(),
+                    Optional.ofNullable(i.monthlyContribution()),
+                    Optional.ofNullable(i.contributionGrowthRate()).orElse(BigDecimal.ZERO),
+                    Optional.ofNullable(i.contributionEnd()).map(YearMonth::parse),
                     Optional.ofNullable(i.drawdownStart()).map(YearMonth::parse),
                     Optional.ofNullable(i.monthlyDrawdown()));
 
