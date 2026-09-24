@@ -10,12 +10,13 @@ import eu.howarth.fin.planning.FinancialModel;
 import eu.howarth.fin.planning.ModelProjection;
 import eu.howarth.fin.planning.RealTermsAdjuster;
 import eu.howarth.fin.planning.RealTermsProjection;
-import eu.howarth.fin.rpi.RpiDataset;
-import eu.howarth.fin.rpi.RpiDatasetLoader;
-import eu.howarth.fin.rpi.projection.ConstantInflationProjection;
-import eu.howarth.fin.rpi.projection.RpiProjector;
-import eu.howarth.fin.rpi.scenario.RpiScenario;
-import eu.howarth.fin.rpi.scenario.RpiScenarioSet;
+import eu.howarth.fin.priceindex.IndexSeries;
+import eu.howarth.fin.priceindex.PriceIndexDataset;
+import eu.howarth.fin.priceindex.PriceIndexDatasetLoader;
+import eu.howarth.fin.priceindex.projection.ConstantIndexProjection;
+import eu.howarth.fin.priceindex.projection.PriceIndexProjector;
+import eu.howarth.fin.priceindex.scenario.IndexScenario;
+import eu.howarth.fin.priceindex.scenario.IndexScenarioSet;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -31,7 +32,7 @@ import java.util.List;
 @Path("/api")
 public class ProjectionResource {
 
-    private static final RpiDataset HISTORICAL = RpiDatasetLoader.bundled();
+    private static final PriceIndexDataset HISTORICAL = PriceIndexDatasetLoader.bundled(IndexSeries.RPI);
 
     @POST
     @Path("/projection")
@@ -62,14 +63,14 @@ public class ProjectionResource {
         return ProjectionResponse.from(nominal, realTerms);
     }
 
-    private RpiScenarioSet buildScenarioSet(List<ScenarioDefinition> defs, YearMonth to) {
-        List<RpiScenario> scenarios = defs.stream()
+    private IndexScenarioSet buildScenarioSet(List<ScenarioDefinition> defs, YearMonth to) {
+        List<IndexScenario> scenarios = defs.stream()
                 .map(def -> {
-                    RpiDataset projected = RpiProjector.project(
-                            HISTORICAL, new ConstantInflationProjection(def.annualRate()), to);
-                    return new RpiScenario(def.name(), projected);
+                    PriceIndexDataset projected = PriceIndexProjector.project(
+                            HISTORICAL, new ConstantIndexProjection(def.annualRate()), to);
+                    return new IndexScenario(def.name(), projected);
                 })
                 .toList();
-        return new RpiScenarioSet(scenarios);
+        return new IndexScenarioSet(scenarios);
     }
 }
